@@ -5,7 +5,7 @@
 [![Github Issues](https://img.shields.io/github/issues/vthiery/conan-log4cxx.svg)](https://github.com/vthiery/conan-log4cxx/issues)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/vthiery/conan-log4cxx.svg)](http://isitmaintained.com/project/vthiery/conan-log4cxx "Average time to resolve an issue")
 
-[JFrog Bintray](https://bintray.com/vthiery/conan-packages/log4cxx%3Avthiery) package for [log4cxx](https://logging.apache.org/log4cxx/latest_stable/)
+[Conan](https://bintray.com/vthiery/conan-packages/log4cxx%3Avthiery) package for [log4cxx](https://logging.apache.org/log4cxx/latest_stable/)
 
 ## Usage
 
