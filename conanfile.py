@@ -1,4 +1,5 @@
 from conans import ConanFile, AutoToolsBuildEnvironment, tools
+import os
 
 class Log4cxxConan(ConanFile):
     name = "log4cxx"
@@ -10,9 +11,7 @@ class Log4cxxConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def source(self):
-        # Install the Apache Portable Runtime Libraries
-        self.run("sudo apt-get install --yes libapr1-dev libapr1 libaprutil1-dev libaprutil1")
-        # Install log4cxx itself
+        # Get log4cxx
         zip_name = "apache-log4cxx-%s.tar.gz" % self.version
         tools.download("http://www.pirbot.com/mirrors/apache/logging/log4cxx/%s/%s" % (self.version, zip_name), zip_name, retry=2, retry_wait=5)
         tools.unzip(zip_name)
@@ -25,14 +24,21 @@ class Log4cxxConan(ConanFile):
     def build(self):
         env_build = AutoToolsBuildEnvironment(self)
         with tools.environment_append(env_build.vars):
+            configure_command = "CXXFLAGS=-Wno-narrowing ./configure"
+            configure_command += " --prefix=" + os.getcwd()
+
             with tools.chdir(self.ZIP_FOLDER_NAME):
-                self.run("CXXFLAGS=-Wno-narrowing ./configure")
+                # Install the Apache Portable Runtime Libraries
+                self.run("sudo apt-get install --yes libapr1-dev libapr1 libaprutil1-dev libaprutil1")
+                # Install log4cxx itself
+                self.run(configure_command)
                 env_build.make()
                 self.run("sudo make install")
 
     def package(self):
-        self.copy("*", dst="include", src="/usr/local/include/log4cxx", keep_path=True)
-        self.copy("liblog4cxx.*", dst="lib", src="/usr/local/lib", keep_path=True)
+        self.copy("*", dst="include", src="include", keep_path=True)
+        self.copy("libapr*", dst="lib", src="lib", keep_path=False)
+        self.copy("liblog4cxx*", dst="lib", src="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ["log4cxx"]
