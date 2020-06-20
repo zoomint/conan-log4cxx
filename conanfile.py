@@ -10,6 +10,9 @@ class Log4cxxConan(ConanFile):
     ZIP_FOLDER_NAME = "apache-log4cxx-%s" % version
     settings = "os", "compiler", "build_type", "arch"
     requires = "apr/1.7.0", "apr-util/1.6.1"
+    generators = "make"
+
+    autotools = None
 
     def source(self):
         # Get log4cxx
@@ -23,22 +26,15 @@ class Log4cxxConan(ConanFile):
             self.run("patch -p1 -i cppFolder_stringInclude.patch && patch -p1 -i exampleFolder_stringInclude.patch")
 
     def build(self):
-        env_build = AutoToolsBuildEnvironment(self)
-        with tools.environment_append(env_build.vars):
-            configure_command = "CXXFLAGS=-Wno-narrowing ./configure"
-            configure_command += " --with-apr=" + self.deps_env_info["apr"].APR_ROOT
-            configure_command += " --with-apr-util=" + self.deps_env_info["apr-util"].APR_UTIL_ROOT
-            configure_command += " --prefix=" + os.getcwd()
-
-            with tools.chdir(self.ZIP_FOLDER_NAME):
-                # Install log4cxx itself
-                self.run(configure_command)
-                env_build.make()
-                self.run("sudo make install")
+        self.autotools = AutoToolsBuildEnvironment(self)
+        self.autotools.cxx_flags.append("-Wno-narrowing")
+        self.autotools.configure(configure_dir=self.ZIP_FOLDER_NAME,
+            args=["--with-apr=" + self.deps_env_info["apr"].APR_ROOT,
+                "--with-apr-util=" + self.deps_env_info["apr-util"].APR_UTIL_ROOT])
+        self.autotools.make()
 
     def package(self):
-        self.copy("*", dst="include", src="include", keep_path=True)
-        self.copy("liblog4cxx*", dst="lib", src="lib", keep_path=False)
+        self.autotools.make(target="install")
 
     def package_info(self):
-        self.cpp_info.libs = ["log4cxx"]
+        self.cpp_info.libs = tools.collect_libs(self)
