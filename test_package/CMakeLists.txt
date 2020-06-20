@@ -1,6 +1,5 @@
+cmake_minimum_required(VERSION 2.8.12)
 project(PackageTest CXX)
-cmake_minimum_required(VERSION 3.5)
-add_compile_options(-std=c++14)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
