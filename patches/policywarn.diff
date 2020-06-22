@@ -1,0 +1,13 @@
+--- apache-log4cxx-0.10.0/src/main/cpp/fixedwindowrollingpolicy.cpp	2010-10-01 15:00:41.000000000 +0200
++++ apache-log4cxx-0.10.0/src/main/cpp/fixedwindowrollingpolicy.cpp	2010-10-01 15:01:21.000000000 +0200
+@@ -76,8 +76,8 @@
+   RollingPolicyBase::activateOptions(p);
+ 
+   if (maxIndex < minIndex) {
+-    LogLog::warn(
+-      LOG4CXX_STR("MaxIndex  cannot be smaller than MinIndex."));
++//    LogLog::warn(
++//      LOG4CXX_STR("MaxIndex  cannot be smaller than MinIndex."));
+     maxIndex = minIndex;
+   }
+ 
